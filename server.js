@@ -11,10 +11,15 @@ const app = express();
 
 // Update the CORS configuration at the top of your server.js
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:3001'], // Allow both ports
+  origin: [
+    'http://localhost:3000', 
+    'http://localhost:3001',
+    'https://deep-think.netlify.app' // Add your frontend domain if you have one
+  ],
   methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type'],
-  credentials: true
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
 app.use(cors(corsOptions));
@@ -28,6 +33,16 @@ app.options('*', cors(corsOptions));
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   console.log('Request body:', req.body);
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.header(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PUT, DELETE, OPTIONS'
+  );
   next();
 });
 
